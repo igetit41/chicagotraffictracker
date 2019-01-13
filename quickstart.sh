@@ -50,27 +50,27 @@ kubectl create clusterrolebinding myclusteradmin --clusterrole=cluster-admin --u
 #Create images
 cd ~/git/rabbitmq-custer
 docker rmi $rabbitmqImage -f
-docker build -f ./Dockerfile -t $rabbitmqImage .
+docker build -f ~/git/rabbitmq-custer/Dockerfile -t $rabbitmqImage .
 gcloud docker -- push $rabbitmqImage
 
 cd ~/git/datadist-postgresql
 docker rmi $datadistImage -f
-docker build -f ./Dockerfile -t $datadistImage .
+docker build -f ~/git/datadist-postgresql/Dockerfile -t $datadistImage .
 gcloud docker -- push $datadistImage
 
 cd ~/git/pythonDBPopulate-postgresql
 docker rmi $dbppgsqlImage -f
-docker build -f ./Dockerfile -t $dbppgsqlImage .
+docker build -f ~/git/pythonDBPopulate-postgresql/Dockerfile -t $dbppgsqlImage .
 gcloud docker -- push $dbppgsqlImage
 
 cd ~/git/pythonDBPopulate-bigquery
 docker rmi $bigqueryImage -f
-docker build -f ./Dockerfile -t $bigqueryImage .
+docker build -f ~/git/pythonDBPopulate-bigquery/Dockerfile -t $bigqueryImage .
 gcloud docker -- push $bigqueryImage
 
 cd ~/git/pythonStreamConsume
 docker rmi $strconsImage -f
-docker build -f ./Dockerfile -t $strconsImage .
+docker build -f ~/git/pythonStreamConsume/Dockerfile -t $strconsImage .
 gcloud docker -- push $strconsImage
 
 #Build Environment

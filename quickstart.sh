@@ -20,10 +20,10 @@ export postgreSQL_password=<password>
 export postgreSQL_database=<database name>
 
 export postgreSQL_host=<server IP>
-export postgreSQL_pathclientcert=~/git/Credentials-np/gcppostgresslclient-cert.pem
-export postgreSQL_pathclientkey=~/git/Credentials-np/gcppostgresslclient-key.pem 
-export postgreSQL_pathserverca=~/git/Credentials-np/gcppostgresslserver-ca.pem
-export bigquery_pathcreds=~/git/Credentials-np/bigquerycreds.json
+export postgreSQL_pathclientcert=~/git/Credentials/gcppostgresslclient-cert.pem
+export postgreSQL_pathclientkey=~/git/Credentials/gcppostgresslclient-key.pem 
+export postgreSQL_pathserverca=~/git/Credentials/gcppostgresslserver-ca.pem
+export bigquery_pathcreds=~/git/Credentials/bigquerycreds.json
 
 
 cp $postgreSQL_pathclientcert ~/git/pythonDBPopulate-postgresql/gcppostgresslclient-cert.pem

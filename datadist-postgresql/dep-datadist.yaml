@@ -1,26 +1,3 @@
-#Data distribution horisontal pod autoscaler
-apiVersion: autoscaling/v2beta1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: hpa-datadist
-  namespace: default
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: dep-datadist
-  minReplicas: 1
-  maxReplicas: 5
-  #Scaling metrics
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      targetAverageUtilization: 50
-    resource:
-      name: memory
-      targetAverageUtilization: 50
----
 #Data distribution deployment
 apiVersion: apps/v1
 kind: Deployment

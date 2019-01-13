@@ -1,46 +1,25 @@
 cd ~
 
-#rm -r git
-#git clone https://igetit41@github.com/igetit41/gcp-python.git --branch Develop ~/git
-
-docker rm -f $(docker ps -a -q)
-docker rmi -f $(docker images -q)
-
-#gcloud container clusters create trafficcollection --num-nodes=3 --machine-type=n1-standard-1 --zone=us-central1-f
 gcloud container clusters create trafficcollection --machine-type=n1-standard-1 --zone=us-central1-f --enable-autoscaling --min-nodes=2 --max-nodes=10 --num-nodes=3
-#gcloud container clusters delete trafficcollection --zone=us-central1-f
 
-#kubectl create clusterrolebinding myclusteradmin --clusterrole=cluster-admin --user=$USER
-#kubectl create clusterrolebinding myclusteradmin --clusterrole=cluster-admin --user=jacob.edward.osterhaus@gmail.com
+kubectl create clusterrolebinding myclusteradmin --clusterrole=cluster-admin --user=<GCP user email address>
 
 export rabbitServer=rabbitmq.default.svc.cluster.local
-export rabbitServer_mqadmin=mqadmin
-export rabbitServer_mqadminpassword=mqadminpassword
+export rabbitServer_mqadmin=<admin username>
+export rabbitServer_mqadminpassword=<admin password>
 
 
 export stream_url=data.cityofchicago.org
-#export stream_account=igetit41@yahoo.com
-#export stream_password=suNder3%clicKed*4
-#export stream_token=UOH7ZmZxwekfDYc9Hvqly0yep
-
-export stream_account=d3f1l3@yahoo.com
-export stream_password=suNder3%clicKed*4
-export stream_token=4sPTvE8j53DI3OfvomPYU4cTv
+export stream_account=<account>
+export stream_password=<password>
+export stream_token=<token>
 
 
-export postgreSQL_user=postgres
-export postgreSQL_password=leNdAnjLOyw0wfJw
-export postgreSQL_database=postgres
+export postgreSQL_user=<username>
+export postgreSQL_password=<password>
+export postgreSQL_database=<database name>
 
-#export postgreSQL_host=35.226.52.136
-#export postgreSQL_host=172.27.176.3
-#export postgreSQL_pathclientcert=~/git/Credentials/gcppostgresslclient-cert.pem
-#export postgreSQL_pathclientkey=~/git/Credentials/gcppostgresslclient-key.pem 
-#export postgreSQL_pathserverca=~/git/Credentials/gcppostgresslserver-ca.pem
-#export bigquerycreds=~/git/Credentials/bigquerycreds.json
-
-export postgreSQL_host=35.238.48.234
-#export postgreSQL_host=10.4.96.5
+export postgreSQL_host=<server IP>
 export postgreSQL_pathclientcert=~/git/Credentials-np/gcppostgresslclient-cert.pem
 export postgreSQL_pathclientkey=~/git/Credentials-np/gcppostgresslclient-key.pem 
 export postgreSQL_pathserverca=~/git/Credentials-np/gcppostgresslserver-ca.pem
@@ -67,20 +46,6 @@ cp $postgreSQL_pathclientkey ~/git/pythontest/gcppostgresslclient-key.pem
 cp $postgreSQL_pathserverca  ~/git/pythontest/gcppostgresslserver-ca.pem
 cp $bigquery_pathcreds ~/git/pythontest/bigquerycreds.json
 
-cp ~/git/pythonDBPopulate-postgresql/pythonDBPopulate-postgresql.py ~/git/pythontest/pythonDBPopulate-postgresql.py
-cp ~/git/datadist-postgresql/datadist-postgresql.py ~/git/pythontest/datadist-postgresql.py
-cp ~/git/pythonDBPopulate-bigquery/pythonDBPopulate-bigquery.py ~/git/pythontest/pythonDBPopulate-bigquery.py
-cp ~/git/pythonStreamConsume/pythonStreamConsume.py ~/git/pythontest/pythonStreamConsume.py
-cp ~/git/datalivetrans/datalivetrans.py ~/git/pythontest/datalivetrans.py
-cp ~/git/pythonWeb/app/main.py ~/git/pythontest/main.py
-
-cp ~/git/pythontest/postgresql.py ~/git/pythonWeb/app/postgresql.py
-
-cp ~/git/pythontest/looptest.py ~/git/datadist-postgresql/looptest.py
-cp ~/git/pythontest/looptest.py ~/git/pythonDBPopulate-postgresql/looptest.py
-cp ~/git/pythontest/looptest.py ~/git/pythonDBPopulate-bigquery/looptest.py
-cp ~/git/pythontest/looptest.py ~/git/pythonStreamConsume/looptest.py
-
 export rabbitmqrbacFile=~/git/rabbitmq-cluster/rabbitmq_rbac.yaml
 export rabbitmqssFile=~/git/rabbitmq-cluster/rabbitmq_statefulsets.yaml
 export dbpbigqFile=~/git/pythonDBPopulate-bigquery/dep-dbpbigq.yaml
@@ -89,11 +54,11 @@ export datadistFile=~/git/datadist-postgresql/dep-datadist.yaml
 export strconsFile=~/git/pythonStreamConsume/dep-strcons.yaml
 export fullenvFile=~/git/fullenvironment.yaml
 
-export rabbitmqImage=gcr.io/$DEVSHELL_PROJECT_ID/rabbitmq:v2
-export bigqueryImage=gcr.io/$DEVSHELL_PROJECT_ID/dbpbigq:v2
-export dbppgsqlImage=gcr.io/$DEVSHELL_PROJECT_ID/dbppgsql:v2
-export datadistImage=gcr.io/$DEVSHELL_PROJECT_ID/datadist:v6
-export strconsImage=gcr.io/$DEVSHELL_PROJECT_ID/strcons:v9
+export rabbitmqImage=gcr.io/$DEVSHELL_PROJECT_ID/rabbitmq:v1
+export bigqueryImage=gcr.io/$DEVSHELL_PROJECT_ID/dbpbigq:v1
+export dbppgsqlImage=gcr.io/$DEVSHELL_PROJECT_ID/dbppgsql:v1
+export datadistImage=gcr.io/$DEVSHELL_PROJECT_ID/datadist:v1
+export strconsImage=gcr.io/$DEVSHELL_PROJECT_ID/strcons:v1
 
 
 cd ~/git/rabbitmq
@@ -123,15 +88,21 @@ gcloud docker -- push $strconsImage
 
 
 cd ~
-#envsubst < $fullenvFile | kubectl apply -f -
 envsubst < $rabbitmqrbacFile | kubectl apply -f -
 envsubst < $rabbitmqssFile | kubectl apply -f -
-#kubectl delete deployment dep-datadist
+sleep 180
 envsubst < $datadistFile | kubectl apply -f -
+sleep 60
 envsubst < $dbppgsqlFile | kubectl apply -f -
+sleep 60
 envsubst < $dbpbigqFile | kubectl apply -f -
-#kubectl delete deployment dep-strcons
+sleep 60
 envsubst < $strconsFile | kubectl apply -f -
 
-kubectl get pods
+kubectl get ConfigMaps
+kubectl get HorizontalPodAutoscalers
+kubectl get Services
+kubectl get Deployments
+kubectl get Statefulsets
+kubectl get Pods
 

@@ -1,20 +1,20 @@
 #Declare Environment Variables
-export gcpuser=<GCP user email address>
+export gcpuser=#<GCP user email address you are shelled in with>
 
 export rabbitServer=rabbitmq.default.svc.cluster.local
-export rabbitServer_mqadmin=<admin username>
-export rabbitServer_mqadminpassword=<admin password>
+export rabbitServer_mqadmin=#<select an admin username>
+export rabbitServer_mqadminpassword=#<select an admin password>
 
 export stream_url=data.cityofchicago.org
-export stream_account=<account>
-export stream_password=<password>
-export stream_token=<token>
+export stream_account=#<Chicago Data Portal account email address>
+export stream_password=#<Chicago Data Portal password>
+export stream_token=#<Chicago Data Portal app token>
 
-export postgreSQL_user=<username>
-export postgreSQL_password=<password>
+export postgreSQL_user=postgres
+export postgreSQL_password=#<Postgre SQL instance password>
 export postgreSQL_database=postgres
 
-export postgreSQL_host=<server IP>
+export postgreSQL_host=#<Postgre SQL instance server IP>
 export postgreSQL_pathclientcert=~/git/Credentials/gcppostgresslclient-cert.pem
 export postgreSQL_pathclientkey=~/git/Credentials/gcppostgresslclient-key.pem 
 export postgreSQL_pathserverca=~/git/Credentials/gcppostgresslserver-ca.pem
@@ -48,7 +48,7 @@ cp $bigquery_pathcreds ~/git/pythonDBPopulate-bigquery/bigquerycreds.json
 kubectl create clusterrolebinding myclusteradmin --clusterrole=cluster-admin --user=$gcpuser
 
 #Create images
-cd ~/git/rabbitmq
+cd ~/git/rabbitmq-custer
 docker rmi $rabbitmqImage -f
 docker build -f ./Dockerfile -t $rabbitmqImage .
 gcloud docker -- push $rabbitmqImage

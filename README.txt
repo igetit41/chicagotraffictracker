@@ -22,28 +22,29 @@ Hi there!  This project is to create a datagathering microserviced environment t
 13. Sign up for an API token from the City of Chicago here:
     https://data.cityofchicago.org/signup
 14. Replace the following indicated values in the quickstart.sh file with your relevant info:
-    --->export gcpuser=<GCP user email address you are shelled in with>
+    --->export gcpuser=#<GCP user email address you are shelled in with>
 
         export rabbitServer=rabbitmq.default.svc.cluster.local
-    --->export rabbitServer_mqadmin=<select an admin username>
-    --->export rabbitServer_mqadminpassword=<select an admin password>
+    --->export rabbitServer_mqadmin=#<select an admin username>
+    --->export rabbitServer_mqadminpassword=#<select an admin password>
 
         export stream_url=data.cityofchicago.org
-    --->export stream_account=<Chicago Data Portal account email address>
-    --->export stream_password=<Chicago Data Portal password>
-    --->export stream_token=<Chicago Data Portal app token>
+    --->export stream_account=#<Chicago Data Portal account email address>
+    --->export stream_password=#<Chicago Data Portal password>
+    --->export stream_token=#<Chicago Data Portal app token>
 
-    --->export postgreSQL_user=<Postgre SQL instance username>
-    --->export postgreSQL_password=<Postgre SQL instance password>
+        export postgreSQL_user=postgres
+    --->export postgreSQL_password=#<Postgre SQL instance password>
         export postgreSQL_database=postgres
 
-    --->export postgreSQL_host=<Postgre SQL instance server IP>
+    --->export postgreSQL_host=#<Postgre SQL instance server IP>
         export postgreSQL_pathclientcert=~/git/Credentials/gcppostgresslclient-cert.pem
         export postgreSQL_pathclientkey=~/git/Credentials/gcppostgresslclient-key.pem 
         export postgreSQL_pathserverca=~/git/Credentials/gcppostgresslserver-ca.pem
         export bigquery_pathcreds=~/git/Credentials/bigquerycreds.json
-15. Execute the following command:
-    /git/quickstart.sh
+15. Execute the following commands (and please allow 10 min to fully deploy and start collecting):
+    chmod +x ~/git/quickstart.sh
+    ~/git/quickstart.sh
 
 
 Useful Links:

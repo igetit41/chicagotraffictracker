@@ -14,6 +14,7 @@ bigquery_client = bigquery.Client.from_service_account_json(os.environ['bigquery
 #Consume callback
 def callback(ch, method, properties, body):
     print("Received %r" % body)
+    channel.basic_ack(delivery_tag = method.delivery_tag)
 
     infoBlock = json.loads(body)
 
@@ -94,7 +95,7 @@ while connectionError != True:
         channel.queue_declare(queue='dbstream_bigquery')
         channel.queue_bind(exchange='processedData', queue='dbstream_bigquery')
 
-        channel.basic_consume(callback, queue='dbstream_bigquery', no_ack=True)
+        channel.basic_consume(callback, queue='dbstream_bigquery', no_ack=False)
 
         print('Script Running')
         channel.start_consuming()

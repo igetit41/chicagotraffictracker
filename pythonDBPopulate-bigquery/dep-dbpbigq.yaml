@@ -1,26 +1,3 @@
-#BigQuery population horisontal pod autoscaler
-apiVersion: autoscaling/v2beta1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: hpa-dbpbigq
-  namespace: default
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: dep-dbpbigq
-  minReplicas: 1
-  maxReplicas: 5
-  #Scaling metrics
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      targetAverageUtilization: 50
-    resource:
-      name: memory
-      targetAverageUtilization: 50
----
 #BigQuery population deployment
 apiVersion: apps/v1
 kind: Deployment
@@ -32,7 +9,7 @@ spec:
   selector:
     matchLabels:
       run: dbpbigq
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:

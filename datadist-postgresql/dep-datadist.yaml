@@ -1,0 +1,67 @@
+#Data distribution horisontal pod autoscaler
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-datadist
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: dep-datadist
+  minReplicas: 1
+  maxReplicas: 5
+  #Scaling metrics
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 50
+    resource:
+      name: memory
+      targetAverageUtilization: 50
+---
+#Data distribution deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-datadist
+  labels:
+    app: datadist
+spec:
+  selector:
+    matchLabels:
+      run: datadist
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: datadist
+    spec:
+      containers:
+      - name: datadist
+        image: $datadistImage
+        env:
+          #Rabbit server credentials
+        - name: rabbitServer
+          value: $rabbitServer
+        - name: rabbitServer_mqadmin
+          value: $rabbitServer_mqadmin
+        - name: rabbitServer_mqadminpassword
+          value: $rabbitServer_mqadminpassword
+          #PostgreSQL credentials
+        - name: postgreSQL_host
+          value: $postgreSQL_host
+        - name: postgreSQL_user
+          value: $postgreSQL_user
+        - name: postgreSQL_password
+          value: $postgreSQL_password
+        - name: postgreSQL_database
+          value: $postgreSQL_database
+          #PostgreSQL SSL credentials
+        - name: postgreSQL_sslrootcert
+          value: "/gcppostgresslserver-ca.pem"
+        - name: postgreSQL_sslcert
+          value: "/gcppostgresslclient-cert.pem"
+        - name: postgreSQL_sslkey
+          value: "/gcppostgresslclient-key.pem"

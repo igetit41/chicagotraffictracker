@@ -1,0 +1,54 @@
+#BigQuery population horisontal pod autoscaler
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-dbpbigq
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: dep-dbpbigq
+  minReplicas: 1
+  maxReplicas: 5
+  #Scaling metrics
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 50
+    resource:
+      name: memory
+      targetAverageUtilization: 50
+---
+#BigQuery population deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-dbpbigq
+  labels:
+    app: dbpbigq
+spec:
+  selector:
+    matchLabels:
+      run: dbpbigq
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: dbpbigq
+    spec:
+      containers:
+      - name: dbpbigq
+        image: $bigqueryImage
+        env:
+          #Rabbit server credentials
+        - name: rabbitServer
+          value: $rabbitServer
+        - name: rabbitServer_mqadmin
+          value: $rabbitServer_mqadmin
+        - name: rabbitServer_mqadminpassword
+          value: $rabbitServer_mqadminpassword
+          #BigQuery credentials
+        - name: bigquery_creds
+          value: "/bigquerycreds.json"

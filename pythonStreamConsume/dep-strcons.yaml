@@ -1,0 +1,37 @@
+#Stream consume deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-strcons
+  labels:
+    app: strcons
+spec:
+  selector:
+    matchLabels:
+      run: strcons
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: strcons
+    spec:
+      containers:
+      - name: strcons
+        image: $strconsImage
+        env:
+          #Rabbit server credentials
+        - name: rabbitServer
+          value: $rabbitServer
+        - name: rabbitServer_mqadmin
+          value: $rabbitServer_mqadmin
+        - name: rabbitServer_mqadminpassword
+          value: $rabbitServer_mqadminpassword
+          #Traffic Data Stream credentials
+        - name: stream_url
+          value: $stream_url
+        - name: stream_account
+          value: $stream_account
+        - name: stream_password
+          value: $stream_password
+        - name: stream_token
+          value: $stream_token

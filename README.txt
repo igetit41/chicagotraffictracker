@@ -1,6 +1,8 @@
+Hi there!  This project is to create a datagathering microserviced environment to collect and store the free traffic information provided by the City of Chicago Data Portal API on GCP.  Follow these instructions for an automatic build, learn from the design, and then customize it for your needs.  Keep in mind that this is still in progress and that a db-n1-standard-1 Cloud SQL instance will be sufficent for short-term collections of a month or under.  Any longer and you will need to resize your instance for more CPU.  Within this design though, while the output to BigQuery is optional (but advised for any large queries) the PostgreSQL endpoint is non-optional because it is utilized to verify that only new data is collected from each data pull.
+
 1. Log into GCP and set up your free trial.
 2. Bring up the Cloud Shell and run the following command to build your cluster:
-    gcloud container clusters create trafficcollection --machine-type=n1-standard-1 --zone=us-central1-f --enable-autoscaling --min-nodes=2 --max-nodes=10 --num-nodes=3
+    gcloud container clusters create trafficcollection --machine-type=n1-standard-1 --zone=us-central1-f --num-nodes=3
 3. Once it is finished building take down the public IPs on each of the cluster nodes.
 4. Build your PostgreSQL Cloud SQL server. You do not need to create any databases or tables/schemas on your instance.
 5. Create a client SSL account for it.
@@ -42,3 +44,8 @@
         export bigquery_pathcreds=~/git/Credentials/bigquerycreds.json
 15. Execute the following command:
     /git/quickstart.sh
+
+
+Useful Links:
+    City of Chicago Data Portal - https://data.cityofchicago.org/Transportation/Chicago-Traffic-Tracker-Congestion-Estimates-by-Se/n4j6-wkkf
+    Google Cloud Platform - https://cloud.google.com/

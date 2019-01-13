@@ -22,7 +22,6 @@ client = Socrata(os.environ['stream_url'], os.environ['stream_token'], username=
 print("Stream Started")
 
 while True:
-    time.sleep(180)
     results = client.get("8v9j-bter", limit=10000)
     rabbitmq_conn = pika.BlockingConnection(parameters=parameters)
     channel = rabbitmq_conn.channel()
@@ -34,4 +33,5 @@ while True:
         print(infoBlock)
         print('++++++++++++++++++++++++++++++++++++++++++++++++++++iteration')
     
+    time.sleep(600)
     rabbitmq_conn.close()

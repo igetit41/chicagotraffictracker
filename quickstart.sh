@@ -48,9 +48,9 @@ cp $bigquery_pathcreds ~/git/pythonDBPopulate-bigquery/bigquerycreds.json
 kubectl create clusterrolebinding myclusteradmin --clusterrole=cluster-admin --user=$gcpuser
 
 #Create images
-cd ~/git/rabbitmq-custer
+cd ~/git/rabbitmq-cluster
 docker rmi $rabbitmqImage -f
-docker build -f ~/git/rabbitmq-custer/Dockerfile -t $rabbitmqImage .
+docker build -f ~/git/rabbitmq-cluster/Dockerfile -t $rabbitmqImage .
 gcloud docker -- push $rabbitmqImage
 
 cd ~/git/datadist-postgresql

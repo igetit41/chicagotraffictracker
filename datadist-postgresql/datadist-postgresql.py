@@ -34,6 +34,15 @@ postgresql_conn = psycopg2.connect(
 
 cursor = postgresql_conn.cursor()
 
+#Create table if it does not exist
+cursor.execute("select * from information_schema.tables where table_name=%s", ('chicagotrafficstats',))
+tablecheck = cursor.fetchall()
+
+if len(tablecheck) < 1:
+    cursor.execute('CREATE TABLE chicagoTrafficStats (dateAdded timestamp, segmentid int, _strheading varchar(255), _traffic int, _tost varchar(255), _fromst varchar(255), _last_updt timestamp, _length float8, street varchar(255), _direction varchar(255), _lif_lat float8, start_lon float8, _lit_lat float8, _lit_lon float8, comments text)')
+    postgresql_conn.commit()
+    print('Table created.')
+
 #Consume callback
 def callback(ch, method, properties, body):
     print("Received %r" % body)
@@ -52,15 +61,6 @@ def callback(ch, method, properties, body):
     _last_updt = _last_updt.replace(tzinfo=dateutil.tz.gettz('America/Chicago'))
     _last_updt = _last_updt.astimezone(dateutil.tz.gettz('UTC'))
     processedData['_last_updt'] = _last_updt.strftime('%Y-%m-%d %H:%M:%S.%f%z')
-
-    #Create table if it does not exist
-    cursor.execute("select * from information_schema.tables where table_name=%s", ('chicagotrafficstats',))
-    tablecheck = cursor.fetchall()
-
-    if len(tablecheck) < 1:
-        cursor.execute('CREATE TABLE chicagoTrafficStats (dateAdded timestamp, segmentid int, _strheading varchar(255), _traffic int, _tost varchar(255), _fromst varchar(255), _last_updt timestamp, _length float8, street varchar(255), _direction varchar(255), _lif_lat float8, start_lon float8, _lit_lat float8, _lit_lon float8, comments text)')
-        postgresql_conn.commit()
-        print('Table created.')
     
     #Check DB for duplicate data
     cursor.execute('SELECT * FROM chicagoTrafficStats WHERE _strheading = %s AND _traffic = %s AND _tost = %s AND street = %s AND _last_updt = %s AND _length = %s AND _fromst = %s AND _direction = %s AND _lif_lat = %s AND start_lon = %s AND _lit_lat = %s AND _lit_lon = %s',(processedData['_strheading'], processedData['_traffic'], processedData['_tost'], processedData['street'], processedData['_last_updt'], processedData['_length'], processedData['_fromst'], processedData['_direction'], processedData['_lif_lat'], processedData['start_lon'], processedData['_lit_lat'], processedData['_lit_lon']))

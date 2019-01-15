@@ -11,6 +11,44 @@ import json
 #BigQuery connection
 bigquery_client = bigquery.Client.from_service_account_json(os.environ['bigquery_creds'])
 
+#Create BigQuery structures if they do not exist
+#Define dataset and table
+dataset = bigquery_client.dataset('trafficdata')
+table = dataset.table('chicagodata')
+
+#Create dataset if it does not exist
+try:
+    bigquery_client.get_dataset(dataset)
+except:
+    dataset_ref = bigquery_client.create_dataset(bigquery.Dataset(dataset))
+    print('Dataset created.')
+
+#Create table if it does not exist
+try:
+    bigquery_client.get_table(table)
+except:
+    schema = [
+        bigquery.SchemaField('dateAdded', 'TIMESTAMP', mode='REQUIRED'),
+        bigquery.SchemaField('segmentid', 'INTEGER', mode='REQUIRED'),
+        bigquery.SchemaField('_strheading', 'STRING', mode='REQUIRED'),
+        bigquery.SchemaField('_traffic', 'INTEGER', mode='REQUIRED'),
+        bigquery.SchemaField('_tost', 'STRING', mode='REQUIRED'),
+        bigquery.SchemaField('_fromst', 'STRING', mode='REQUIRED'),
+        bigquery.SchemaField('_last_updt', 'TIMESTAMP', mode='REQUIRED'),
+        bigquery.SchemaField('_length', 'FLOAT', mode='REQUIRED'),
+        bigquery.SchemaField('street', 'STRING', mode='REQUIRED'),
+        bigquery.SchemaField('_direction', 'STRING', mode='REQUIRED'),
+        bigquery.SchemaField('_lif_lat', 'FLOAT', mode='REQUIRED'),
+        bigquery.SchemaField('start_lon', 'FLOAT', mode='REQUIRED'),
+        bigquery.SchemaField('_lit_lat', 'FLOAT', mode='REQUIRED'),
+        bigquery.SchemaField('_lit_lon', 'FLOAT', mode='REQUIRED'),
+        bigquery.SchemaField('comments', 'STRING', mode='NULLABLE'),
+    ]
+    table_config = bigquery.Table(table, schema=schema)
+    table_ref = bigquery_client.create_table(table_config)
+    print('Table created.')
+
+
 #Consume callback
 def callback(ch, method, properties, body):
     print("Received %r" % body)
@@ -36,43 +74,6 @@ def callback(ch, method, properties, body):
     bigqformat[0]['_lit_lon'] = float(infoBlock['_lit_lon'])
     bigqformat[0]['comments'] = infoBlock['comments']
     
-    
-    #Define dataset and table
-    dataset = bigquery_client.dataset('trafficdata')
-    table = dataset.table('chicagodata')
-
-    #Create dataset if it does not exist
-    try:
-        bigquery_client.get_dataset(dataset)
-    except:
-        dataset_ref = bigquery_client.create_dataset(bigquery.Dataset(dataset))
-        print('Dataset created.')
-
-    #Create table if it does not exist
-    try:
-        bigquery_client.get_table(table)
-    except:
-        schema = [
-            bigquery.SchemaField('dateAdded', 'TIMESTAMP', mode='REQUIRED'),
-            bigquery.SchemaField('segmentid', 'INTEGER', mode='REQUIRED'),
-            bigquery.SchemaField('_strheading', 'STRING', mode='REQUIRED'),
-            bigquery.SchemaField('_traffic', 'INTEGER', mode='REQUIRED'),
-            bigquery.SchemaField('_tost', 'STRING', mode='REQUIRED'),
-            bigquery.SchemaField('_fromst', 'STRING', mode='REQUIRED'),
-            bigquery.SchemaField('_last_updt', 'TIMESTAMP', mode='REQUIRED'),
-            bigquery.SchemaField('_length', 'FLOAT', mode='REQUIRED'),
-            bigquery.SchemaField('street', 'STRING', mode='REQUIRED'),
-            bigquery.SchemaField('_direction', 'STRING', mode='REQUIRED'),
-            bigquery.SchemaField('_lif_lat', 'FLOAT', mode='REQUIRED'),
-            bigquery.SchemaField('start_lon', 'FLOAT', mode='REQUIRED'),
-            bigquery.SchemaField('_lit_lat', 'FLOAT', mode='REQUIRED'),
-            bigquery.SchemaField('_lit_lon', 'FLOAT', mode='REQUIRED'),
-            bigquery.SchemaField('comments', 'STRING', mode='NULLABLE'),
-        ]
-        table_config = bigquery.Table(table, schema=schema)
-        table_ref = bigquery_client.create_table(table_config)
-        print('Table created.')
-
     #Insert data into BigQuery
     errors = bigquery_client.insert_rows(bigquery_client.get_table(bigquery_client.dataset('trafficdata').table('chicagodata')), bigqformat)
 

@@ -33,5 +33,5 @@ while True:
         print(infoBlock)
         print('++++++++++++++++++++++++++++++++++++++++++++++++++++iteration')
     
-    time.sleep(600)
     rabbitmq_conn.close()
+    time.sleep(600)
